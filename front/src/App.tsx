@@ -1,6 +1,7 @@
 import { ChangeEvent, UIEvent, useEffect, useState } from "react";
 import { Loader } from "./components/Loader";
 import { RowItem } from "./components/RowItem";
+import { faker } from "@faker-js/faker";
 
 export interface IUser {
   id: string;
@@ -714,9 +715,11 @@ const mockData = [
 
 function App() {
   const [users, setUsers] = useState<IUser[]>(mockData.slice(0, 20));
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(2);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState(0);
+  const [seed, setSeed] = useState<string | number>("");
+  const [country, setCountry] = useState("ru");
 
   useEffect(() => {
     if (isLoading) {
@@ -752,15 +755,34 @@ function App() {
       }
     };
 
+  const handleGenerateSeed = () => {
+    const length = faker.random.numeric();
+    const seed = faker.random.numeric(+length);
+    setSeed(seed + currentPage);
+  };
+
+  const handleSeedInput = (e: ChangeEvent<HTMLInputElement>) => {
+    // transform string into number ?
+    setSeed(e.target.value + currentPage);
+  };
+
+  const handleCountryChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    setCountry(e.target.value);
+  };
+
   return (
     <div className="container mx-auto h-full py-4 flex flex-col justify-between font-semibold">
       <div className="border h-20 flex items-center justify-around divide-x rounded-xl">
         <div className="w-2/12 flex flex-col">
           <p className="self-center text-xl">Country</p>
-          <select className="w-full border border-stone-900 rounded-md px-1.5">
-            <option>Россия</option>
-            <option>USA</option>
-            <option>Polska</option>
+          <select
+            value={country}
+            onChange={handleCountryChange}
+            className="w-full border border-stone-900 rounded-md px-1.5"
+          >
+            <option value="ru">Россия</option>
+            <option value="us">USA</option>
+            <option value="pl">Polska</option>
           </select>
         </div>
         <div className="w-5/12 flex flex-col items-center">
@@ -796,8 +818,13 @@ function App() {
             <input
               type="text"
               className="border border-stone-900 rounded-md px-1.5"
+              value={seed}
+              onChange={handleSeedInput}
             />
-            <button className="border w-32 border-stone-900 rounded-md bg-teal-300">
+            <button
+              onClick={handleGenerateSeed}
+              className="border w-32 border-stone-900 rounded-md bg-teal-300"
+            >
               Generate
             </button>
           </div>
