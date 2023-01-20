@@ -73,9 +73,10 @@ const writeToFile = (file, data) => {
 
 const rusCities = [];
 
+faker.seed(2)
 
-while (rusCities.length < 5000) {
-  rusCities.push((faker.database.mongodbObjectId()));
+while (rusCities.length < 5) {
+  rusCities.push((faker.name.fullName()));
 }
 console.log(rusCities)
-writeToFile('usIds.txt', Array.from(new Set(rusCities)))
+// writeToFile('usIds.txt', Array.from(new Set(rusCities)))
