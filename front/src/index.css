@@ -9,11 +9,28 @@
 }
 
 html {
-  background: rgb(34,193,195);
-  background: linear-gradient(66deg, rgba(34,193,195,1) 0%, rgba(192,253,45,1) 100%);
+  background: rgb(63,94,251);
+background: linear-gradient(90deg, rgb(157, 170, 235) 0%, rgb(214, 122, 140) 100%);
 }
 
 html, body, #root {
   height: 100%;
   width: 100%;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }

@@ -1,8 +1,6 @@
+import { ChangeEvent, UIEvent, useEffect, useState } from "react";
+import { Loader } from "./components/Loader";
 import { RowItem } from "./components/RowItem";
-import { FixedSizeList as List } from "react-window";
-import InfiniteLoader from "react-window-infinite-loader";
-import { useRef, useState } from "react";
-import ExampleWrapper from "./components/Wrapper";
 
 export interface IUser {
   id: string;
@@ -714,33 +712,104 @@ const mockData = [
   }
 ];
 
-const Row = ({ index, style }: any) => <div style={style}>Row {index}</div>;
-
 function App() {
-  const [hasNextPage, setHasNextPage] = useState(true);
-  const [isNextPageLoading, setIsNextPageLoading] = useState(false);
-  const [items, setItems] = useState<IUser[]>(mockData.slice(0, 20));
+  const [users, setUsers] = useState<IUser[]>(mockData.slice(0, 20));
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState(0);
 
-  const loadNextPage = (start: number) => {
-    setIsNextPageLoading(true);
-    setTimeout(() => {
-      setHasNextPage(items.length < 1000);
-      setIsNextPageLoading(false);
-      setItems(prev => [...prev, ...mockData.slice(start, start + 10)]);
-    }, 1500);
+  useEffect(() => {
+    if (isLoading) {
+      setTimeout(() => {
+        setUsers(prev => [
+          ...prev,
+          ...mockData.slice(currentPage, currentPage + 10)
+        ]);
+        setCurrentPage(prev => prev + 1);
+        setIsLoading(false);
+      }, 2000);
+    }
+  }, [isLoading]);
+
+  const scrollHandler = (e: UIEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLElement;
+    if (isLoading) {
+      e.preventDefault();
+      return;
+    }
+    if (target.scrollHeight - (target.scrollTop + target.clientHeight) < 100) {
+      setIsLoading(true);
+    }
   };
 
+  const handleErrorsInput =
+    (type: string) => (e: ChangeEvent<HTMLInputElement>) => {
+      const value = +e.target.value;
+      if (type === "range") {
+        setErrors(value);
+      } else {
+        setErrors(value / 100);
+      }
+    };
+
   return (
-    <div className="container mx-auto h-full py-4 flex flex-col justify-between">
-      <div className="border h-20"></div>
-      <div className="h-5/6 divide-y">
-        <ExampleWrapper
-          hasNextPage={hasNextPage}
-          isNextPageLoading={isNextPageLoading}
-          items={items}
-          loadNextPage={loadNextPage}
-        />
-        {/* {mockData.map((entry, i) => (<RowItem key={i} user={entry} number={i+1} />))} */}
+    <div className="container mx-auto h-full py-4 flex flex-col justify-between font-semibold">
+      <div className="border h-20 flex items-center justify-around divide-x rounded-xl">
+        <div className="w-2/12 flex flex-col">
+          <p className="self-center text-xl">Country</p>
+          <select className="w-full border border-stone-900 rounded-md px-1.5">
+            <option>Россия</option>
+            <option>USA</option>
+            <option>Polska</option>
+          </select>
+        </div>
+        <div className="w-5/12 flex flex-col items-center">
+          <p className="text-xl">Erorrs</p>
+          <div className="flex items-center w-full">
+            <div className="flex w-full">
+              <span className="w-10 text-right">0</span>
+              <input
+                type="range"
+                min={0}
+                max={10}
+                step={0.25}
+                className="w-10/12 mx-1.5"
+                onChange={handleErrorsInput("range")}
+                value={errors}
+              />
+              <span className="w-10">{errors.toFixed(2)}</span>
+            </div>
+            <input
+              type="number"
+              min={0}
+              max={1000}
+              step={25}
+              value={errors * 100}
+              onChange={handleErrorsInput("number")}
+              className="mx-6 pl-1 border border-stone-900 rounded-md"
+            />
+          </div>
+        </div>
+        <div className="flex items-center w-4/12 flex-col">
+          <p className="text-xl">Seed</p>
+          <div className="flex justify-between w-10/12">
+            <input
+              type="text"
+              className="border border-stone-900 rounded-md px-1.5"
+            />
+            <button className="border w-32 border-stone-900 rounded-md bg-teal-300">
+              Generate
+            </button>
+          </div>
+        </div>
+      </div>
+      <div className="relative h-5/6 border-t border-b border-l">
+        <div className="h-full divide-y overflow-auto" onScroll={scrollHandler}>
+          {users.map((entry, i) => (
+            <RowItem key={i} user={entry} number={i + 1} />
+          ))}
+          {isLoading && <Loader />}
+        </div>
       </div>
     </div>
   );

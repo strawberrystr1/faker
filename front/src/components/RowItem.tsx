@@ -15,7 +15,7 @@ export const RowItem: FC<IProps> = ({
   number
 }) => {
   return (
-    <div className="h-16 flex justify-around divide-x border-b">
+    <div className="h-12 flex justify-around divide-x">
       <div className="h-full w-16 flex justify-center items-center">
         {number}
       </div>
