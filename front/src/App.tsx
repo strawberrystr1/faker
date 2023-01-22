@@ -4,7 +4,7 @@ import { ExportToCsv } from "export-to-csv";
 
 import RowItem from "./components/RowItem";
 import { createSetOfUsers } from "./utils/randomizers";
-import { ERROR_CONVERT_KOEF, INITIAL_USERS_AMOUNT } from "./constants";
+import { ERROR_CONVERT_KOEF, INITIAL_USERS_AMOUNT, PL_LOCALE, RU_LOCALE, US_LOCALE } from "./constants";
 export interface IUser {
   id: string;
   name: string;
@@ -17,7 +17,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState(0);
   const [seed, setSeed] = useState<number>(1);
-  const [country, setCountry] = useState("en_US");
+  const [country, setCountry] = useState(US_LOCALE);
   const [users, setUsers] = useState<IUser[]>(() =>
     createSetOfUsers(
       country,
@@ -112,9 +112,9 @@ function App() {
             onChange={handleCountryChange}
             className="w-full border border-stone-900 rounded-md px-1.5"
           >
-            <option value="ru">Россия</option>
-            <option value="en_US">USA</option>
-            <option value="pl">Polska</option>
+            <option value={RU_LOCALE}>Россия</option>
+          <option value={US_LOCALE}>USA</option>
+            <option value={PL_LOCALE}>Polska</option>
           </select>
         </div>
         <div className="w-5/12 flex flex-col items-center">

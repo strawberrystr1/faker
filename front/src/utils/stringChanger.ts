@@ -2,7 +2,7 @@ import Chooser from "random-seed-weighted-chooser";
 import {
   ADD_CHARACTER_OPERATION,
   DELETE_CHARACTER_OPERATION,
-  REPLACE_CHARACTER_OPERATION
+  REPLACE_CHARACTER_OPERATION,
 } from "../constants";
 
 const charactersToInsert: Record<string, string[]> = {

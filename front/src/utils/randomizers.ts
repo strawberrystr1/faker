@@ -4,6 +4,7 @@ import MTwist from "mtwist";
 
 import data from "../data";
 import { changeString } from "./stringChanger";
+import { IDS_LOCALE, DIGITS_LOCALE } from '../constants';
 
 const getMockedData = (locale: string, seed: number, key: string) => {
   const values = data[locale][key];
@@ -114,8 +115,8 @@ const createUser = (locale: string, seed: number, errors: number) => {
   return {
     name: changeString(name, errors, seed + name.length, locale),
     address: changeString(address, errors, seed + address.length, locale),
-    phone: changeString(phone, errors, seed + phone.length, "digits"),
-    id: changeString(id, errors, seed + id.length, "ids")
+    phone: changeString(phone, errors, seed + phone.length, DIGITS_LOCALE),
+    id: changeString(id, errors, seed + id.length, IDS_LOCALE)
   };
 };
 
