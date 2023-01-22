@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, memo } from "react";
 
 interface IProps {
   user: {
@@ -10,7 +10,7 @@ interface IProps {
   number: number;
 }
 
-export const RowItem: FC<IProps> = ({
+const RowItem: FC<IProps> = ({
   user: { id, name, address, phone },
   number
 }) => {
@@ -19,18 +19,20 @@ export const RowItem: FC<IProps> = ({
       <div className="h-full w-16 flex justify-center items-center">
         {number}
       </div>
-      <div className="h-full w-1/6 flex justify-center items-center px-2">
+      <div className="h-full w-3/12 flex justify-center items-center px-2">
         {id}
       </div>
       <div className="h-full w-2/6 flex justify-center items-center px-2">
         {name}
       </div>
-      <div className="h-full w-3/6 flex justify-center items-center px-2">
+      <div className="h-full w-4/6 flex justify-center items-center px-2 text-center">
         {address}
       </div>
-      <div className="h-full w-1/6 flex justify-center items-center px-2">
+      <div className="h-full w-3/12 flex justify-center items-center px-2">
         {phone}
       </div>
     </div>
   );
 };
+
+export default memo(RowItem)

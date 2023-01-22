@@ -1,0 +1,6 @@
+export const ERROR_CONVERT_KOEF = 100;
+export const INITIAL_USERS_AMOUNT = 20;
+
+export const ADD_CHARACTER_OPERATION = 1;
+export const REPLACE_CHARACTER_OPERATION = 2;
+export const DELETE_CHARACTER_OPERATION = 3;

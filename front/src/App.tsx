@@ -1,8 +1,10 @@
 import { ChangeEvent, UIEvent, useEffect, useState } from "react";
-import { Loader } from "./components/Loader";
-import { RowItem } from "./components/RowItem";
 import { faker } from "@faker-js/faker";
+import { ExportToCsv } from "export-to-csv";
 
+import RowItem from "./components/RowItem";
+import { createSetOfUsers } from "./utils/randomizers";
+import { ERROR_CONVERT_KOEF, INITIAL_USERS_AMOUNT } from "./constants";
 export interface IUser {
   id: string;
   name: string;
@@ -10,738 +12,53 @@ export interface IUser {
   phone: string;
 }
 
-const mockData = [
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      " Jędrzejów, Województwo lubelskie, bulw. Żurawski 444 / 20, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  },
-  {
-    id: "9f9dbc0fff74a0a3e65045de",
-    name: "Абрамов Владислав Максимович",
-    address:
-      "Poland, Województwo lubelskie Jędrzejów, bulw. Żurawski 444, 2020202",
-    phone: "+48 (845) 731-322"
-  }
-];
-
 function App() {
-  const [users, setUsers] = useState<IUser[]>(mockData.slice(0, 20));
   const [currentPage, setCurrentPage] = useState(2);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState(0);
-  const [seed, setSeed] = useState<string | number>("");
-  const [country, setCountry] = useState("ru");
+  const [seed, setSeed] = useState<number>(1);
+  const [country, setCountry] = useState("en_US");
+  const [users, setUsers] = useState<IUser[]>(() =>
+    createSetOfUsers(
+      country,
+      seed + currentPage,
+      INITIAL_USERS_AMOUNT,
+      errors * ERROR_CONVERT_KOEF
+    )
+  );
 
   useEffect(() => {
     if (isLoading) {
-      setTimeout(() => {
-        setUsers(prev => [
-          ...prev,
-          ...mockData.slice(currentPage, currentPage + 10)
-        ]);
-        setCurrentPage(prev => prev + 1);
-        setIsLoading(false);
-      }, 2000);
+      setUsers(prev => [
+        ...prev,
+        ...createSetOfUsers(
+          country,
+          seed + currentPage + users.length,
+          INITIAL_USERS_AMOUNT / 2,
+          errors * ERROR_CONVERT_KOEF
+        )
+      ]);
+      setIsLoading(false);
     }
-  }, [isLoading]);
+  }, [isLoading, currentPage]);
+
+  useEffect(() => {
+    setCurrentPage(2);
+    setUsers(
+      createSetOfUsers(
+        country,
+        seed + currentPage,
+        INITIAL_USERS_AMOUNT,
+        errors * ERROR_CONVERT_KOEF
+      )
+    );
+  }, [country, seed, errors]);
 
   const scrollHandler = (e: UIEvent<HTMLDivElement>) => {
     const target = e.target as HTMLElement;
-    if (isLoading) {
-      e.preventDefault();
-      return;
-    }
-    if (target.scrollHeight - (target.scrollTop + target.clientHeight) < 100) {
+    if (target.scrollHeight - (target.scrollTop + target.clientHeight) < 300) {
       setIsLoading(true);
+      setCurrentPage(prev => prev + 1);
     }
   };
 
@@ -751,23 +68,38 @@ function App() {
       if (type === "range") {
         setErrors(value);
       } else {
-        setErrors(value / 100);
+        setErrors(value / ERROR_CONVERT_KOEF);
       }
     };
 
   const handleGenerateSeed = () => {
     const length = faker.random.numeric();
     const seed = faker.random.numeric(+length);
-    setSeed(seed + currentPage);
+    setSeed(+seed);
   };
 
   const handleSeedInput = (e: ChangeEvent<HTMLInputElement>) => {
-    // transform string into number ?
-    setSeed(e.target.value + currentPage);
+    setSeed(+e.target.value);
   };
 
   const handleCountryChange = (e: ChangeEvent<HTMLSelectElement>) => {
     setCountry(e.target.value);
+  };
+
+  const downloadHandler = () => {
+    const options = {
+      fieldSeparator: ",",
+      quoteStrings: '"',
+      decimalSeparator: ".",
+      showLabels: true,
+      showTitle: true,
+      title: "Usees",
+      useTextFile: false,
+      useBom: true,
+      useKeysAsHeaders: true
+    };
+    const csvExporter = new ExportToCsv(options);
+    csvExporter.generateCsv(JSON.stringify(users));
   };
 
   return (
@@ -781,7 +113,7 @@ function App() {
             className="w-full border border-stone-900 rounded-md px-1.5"
           >
             <option value="ru">Россия</option>
-            <option value="us">USA</option>
+            <option value="en_US">USA</option>
             <option value="pl">Polska</option>
           </select>
         </div>
@@ -806,7 +138,7 @@ function App() {
               min={0}
               max={1000}
               step={25}
-              value={errors * 100}
+              value={errors * ERROR_CONVERT_KOEF}
               onChange={handleErrorsInput("number")}
               className="mx-6 pl-1 border border-stone-900 rounded-md"
             />
@@ -816,7 +148,7 @@ function App() {
           <p className="text-xl">Seed</p>
           <div className="flex justify-between w-10/12">
             <input
-              type="text"
+              type="number"
               className="border border-stone-900 rounded-md px-1.5"
               value={seed}
               onChange={handleSeedInput}
@@ -835,9 +167,14 @@ function App() {
           {users.map((entry, i) => (
             <RowItem key={i} user={entry} number={i + 1} />
           ))}
-          {isLoading && <Loader />}
         </div>
       </div>
+      <button
+        className="rounded-md w-[150px] h-[30px] border self-end bg-rose-200"
+        onClick={downloadHandler}
+      >
+        Download as CSV
+      </button>
     </div>
   );
 }
